@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DownloadFiles</string>
+    <string name="service_file_download_broadcaster">lk.lakmalz.downloadfiles.filedownloadservice</string>
+</resources>
