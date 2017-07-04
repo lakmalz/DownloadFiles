@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:background="@color/light_gray"
+                android:layout_margin="4dp"
+                android:padding="16dp">
+
+    <Button
+        android:id="@+id/btn_download"
+        android:layout_width="230dp"
+        android:layout_height="56dp"
+        android:layout_centerVertical="true"
+        android:text="Download"/>
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/circle_shape"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/circular_progress_bar"/>
+
+</RelativeLayout>

@@ -12,6 +12,7 @@ public class DownloadFile implements Serializable {
     String fileType;
     String url;
     String savedPath;
+    int id;
 
     public String getFileType() {
         return fileType;
@@ -35,5 +36,13 @@ public class DownloadFile implements Serializable {
 
     public void setSavedPath(String savedPath) {
         this.savedPath = savedPath;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

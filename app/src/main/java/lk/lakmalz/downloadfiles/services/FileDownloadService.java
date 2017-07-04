@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import lk.lakmalz.downloadfiles.R;
 import lk.lakmalz.downloadfiles.models.DownloadFile;
@@ -29,10 +31,17 @@ public class FileDownloadService extends IntentService {
     private final AppDirectory saveDirectory;
     private int totalSize, loadedSize;
     private String broadcaster;
+    private volatile boolean running = true;
+    private volatile boolean killed = false;
+    List<DownloadFile> mDownloadFiles;
+
+    private boolean IsRunning;
 
     public FileDownloadService() {
         super(FileDownloadService.class.getName());
         saveDirectory = new AppDirectory();
+        IsRunning = false;
+        mDownloadFiles = new ArrayList<>();
     }
 
     @Override
@@ -40,12 +49,41 @@ public class FileDownloadService extends IntentService {
 
         broadcaster = getResources().getString(R.string.service_file_download_broadcaster);
         DownloadFile downloadFile = (DownloadFile) intent.getSerializableExtra(ConstantExtras.BUNDLE_EXTRA_DOWNLOAD_FILE);
-        downloadFile(downloadFile);
+        //downloadFile(downloadFile);
+
+        if(!checkInQueue(downloadFile))
+        {
+            mDownloadFiles.add(downloadFile);
+            downlaodNext();
+        }
+    }
+
+    private void downlaodNext()
+    {
+        if(!IsRunning && mDownloadFiles.size() > 0)
+            downloadFile(mDownloadFiles.get(0));
+    }
+
+
+    private boolean checkInQueue(DownloadFile downloadFile)
+    {
+        boolean isInQueue = false;
+
+        for(DownloadFile file : mDownloadFiles)
+        {
+            if(downloadFile.getId() == file.getId())
+            {
+                isInQueue = true;
+                break;
+            }
+        }
+
+        return isInQueue;
     }
 
     private void downloadFile(DownloadFile downloadFile) {
         try {
-
+            IsRunning = true;
             URL toDownload = new URL(downloadFile.getUrl());
             HttpURLConnection urlConnection = (HttpURLConnection) toDownload.openConnection();
             urlConnection.setRequestMethod(Constant.METHOD_GET);
@@ -90,6 +128,15 @@ public class FileDownloadService extends IntentService {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+
+            totalSize = 0;
+            loadedSize = 0;
+            if (mDownloadFiles != null) {
+                mDownloadFiles.remove(0);
+            }
+            IsRunning = false;
+            downlaodNext();
         }
     }
 
